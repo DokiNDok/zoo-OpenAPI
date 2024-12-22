@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: Зоопарк OpenAPI спецификация
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/api/v1/
+    description: Локальный сервер
+paths:
+  /animals:
+    get:
+      summary: Получить список всех животных
+      tags:
+        - Animals
+      responses:
+        '200':
+          description: Список животных успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Animal'
+              example:
+                - animal_id: '1'
+                  name: Лев
+                  status: healthy
+                - animal_id: '2'
+                  name: Тигр
+                  status: healthy
+                - animal_id: '3'
+                  name: Слон
+                  status: healthy
+                - animal_id: '4'
+                  name: Обезьяна
+                  status: healthy
+                - animal_id: '5'
+                  name: Жираф
+                  status: sick
+        '404':
+          description: Животные не найдены
+        '500':
+          description: Что-то пошло не так:(
+  /animals/{id}:
+    get:
+      summary: Получить информацию о конкретном животном
+      tags:
+        - Animals
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Уникальный идентификатор животного
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnimalDetail'
+        '404':
+          description: Животное не найдено
+        '500':
+          description: Что-то пошло не так:(
+  /animals/vote:
+    post:
+      summary: Голосование за животное месяца
+      tags:
+        - Votes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                animal_id:
+                  type: string
+                  description: Идентификатор животного, за которое вы голосуете
+      responses:
+        '200':
+          description: Ваш голос учтен
+        '400':
+          description: Ошибка при голосовании. Неверный идентификатор животного
+        '404':
+          description: Животное не найдено
+        '500':
+          description: Что-то пошло не так:(
+components:
+  schemas:
+    Animal:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        animal_id:
+          type: string
+          example: '*id*'
+        name:
+          type: string
+          example: Лев
+        status:
+          type: string
+          enum:
+            - healthy
+            - sick
+          description: Состояние животного
+    AnimalDetail:
+      type: object
+      properties:
+        animal_id:
+          type: string
+          example: '*id*'
+        name:
+          type: string
+          example: Лев
+        species:
+          type: string
+          example: Panthera leo
+        age:
+          type: integer
+          example: 2
+        habitat:
+          type: string
+          example: Саванна
+        description:
+          type: string
+          example: Лев - царь зверей!
+        health_status:
+          type: string
+          example: Здоров
